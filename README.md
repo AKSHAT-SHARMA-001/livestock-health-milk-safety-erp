@@ -120,6 +120,16 @@ The macOS helper `Start Local ERP.command` starts a project-local persistent MyS
 
 These are seeded academic accounts for synthetic data. Farmer registration is also available on the login page.
 
+To populate the demo accounts with sample records after starting the services:
+
+```bash
+python3 scripts/seed-demo.py
+```
+
+This adds four animals, six sample veterinarians with eleven services, upcoming bookings, active and expired withdrawal examples, a vaccination, ratings, seven days of milk yields and sample sales. Existing records are preserved; rerunning on the same day reuses the sample records instead of duplicating them.
+
+The farmer directory groups services by veterinarian, with search, specialty and availability filters. Sample identities are explicitly labelled. Automated-test listings are hidden by default, with an option to show them; no underlying records are deleted. Booking links preselect the corresponding service.
+
 ## Testing
 
 The checks cover the main implemented workflows; this is not a production security or load-test audit.
@@ -143,12 +153,15 @@ For additional validation and simultaneous stock/sale requests, run `python3 scr
 Browser checks require the local ERP to be running:
 
 ```bash
+python3 scripts/seed-demo.py
 cd frontend
 npx playwright install chromium
 npm run test:ui
 ```
 
 These exercise role pages, all reports, signup, animal CRUD, inventory editing, session handling, and mobile navigation. They write fresh screenshots under `docs/screenshots/`. Set `CHROMIUM_EXECUTABLE` if using an existing Chromium installation.
+
+The seed step supplies the sample veterinarians and services used by the directory filter and booking-link checks.
 
 The workflow has passed against local **MySQL 8.4.13**, H2 in MySQL mode, and a temporary HTTPS demo tunnel. See the [verification record](docs/VERIFICATION.md). The included GitHub Actions workflow builds the project and runs the H2 integration harness; its first hosted result will be available after publication.
 

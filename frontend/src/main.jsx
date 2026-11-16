@@ -5,6 +5,7 @@ import App from "./App";
 import { AuthProvider } from "./auth";
 import "./styles.css";
 import "./theme.css";
+import "./practical.css";
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>

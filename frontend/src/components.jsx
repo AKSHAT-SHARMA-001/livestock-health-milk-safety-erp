@@ -65,6 +65,7 @@ export function Form({ title, fields, onSubmit, submit = "Save" }) {
             {f.label || f.name}
             {f.options ? (
               <select
+                aria-label={f.label || f.name}
                 required
                 value={values[f.name] ?? f.value ?? ""}
                 onChange={(e) =>
@@ -134,7 +135,7 @@ export function Status({ value }) {
     <span
       className={
         "badge " +
-        (["COMPLETED", "HEALTHY", "OK"].includes(value)
+        (["COMPLETED", "HEALTHY", "OK", "AVAILABLE"].includes(value)
           ? "good"
           : /BLOCK|WITHDRAWAL|REJECTED|LOW STOCK/.test(value)
             ? "negative"

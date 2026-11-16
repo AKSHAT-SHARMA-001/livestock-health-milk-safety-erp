@@ -1,5 +1,11 @@
 # Test results
 
+## Vet directory update — 17 November 2026
+
+The directory now groups services under six clearly labelled sample vets. It shows real stored fees, availability and rating counts rather than duplicating a card for every test service. Automated-test listings are hidden by default but remain available through a toggle.
+
+Browser checks passed for name/service search, specialty filtering, availability filtering, empty-state recovery, the test-listing toggle, and service-specific booking preselection. The complete existing role/browser suite also passed after the layout changes. The demo seeder was run twice to confirm it reuses its sample records.
+
 Verified on 16 November 2026.
 
 ## Build and integration checks

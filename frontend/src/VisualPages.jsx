@@ -298,25 +298,16 @@ function DashboardHeading({ name, label }) {
     </div>
   );
 }
-function Hero({ title, description, to, action }) {
+function ContextSummary({ title, description, to, action }) {
   return (
-    <section className="dashboard-hero">
-      <img src={HERO} alt="A peaceful dairy pasture" />
-      <div className="hero-shade" />
-      <div className="hero-copy">
-        <span className="hero-eyebrow">
-          <Icon name="leaf" /> LIVESTOCK MANAGEMENT
-        </span>
+    <section className="dashboard-context">
+      <div>
         <h2>{title}</h2>
         <p>{description}</p>
-        <Link className="hero-button" to={to}>
-          {action}
-          <Icon name="arrow" />
-        </Link>
       </div>
-      <span className="hero-tag">
-        <Icon name="shield" /> Treatment-linked milk sale checks
-      </span>
+      <Link className="context-action" to={to}>
+        {action}
+      </Link>
     </section>
   );
 }
@@ -324,9 +315,6 @@ function Stat({ icon, label, value, detail, tone = "" }) {
   return (
     <article className={"stat-card " + tone}>
       <div className="stat-top">
-        <span className="stat-icon">
-          <Icon name={icon} />
-        </span>
         <span className="stat-label">{label}</span>
       </div>
       <div className="stat-value">{value}</div>
@@ -339,7 +327,6 @@ function QuickLinks({ links }) {
     <section className="dashboard-quick">
       <div className="section-heading">
         <h2>Quick actions</h2>
-        <span className="eyebrow">QUICK ACTIONS</span>
       </div>
       <div className="quick-links">
         {links.map(([to, title, description, icon]) => (
@@ -432,14 +419,8 @@ function FarmerDashboard({ user }) {
   return (
     <div className="dashboard-page">
       <DashboardHeading name={user.name} />
-      <Hero
-        title={
-          <>
-            Animal records
-            <br />
-            and daily milk.
-          </>
-        }
+      <ContextSummary
+        title="Animal records and daily milk"
         description="Manage your animals, arrange a vet visit and record milk yield. Milk sales are checked against recorded treatments."
         to="/animals"
         action="View my animals"
@@ -496,36 +477,26 @@ function FarmerDashboard({ user }) {
             {!animals.loading &&
               !animals.error &&
               (animals.data.length ? (
-                <div className="animal-grid">
-                  {animals.data.slice(0, 3).map((animal, index) => (
-                    <Link
-                      to="/animals"
-                      className={"herd-card herd-card-" + (index % 3)}
-                      key={animal.id}
-                    >
-                      <div className="herd-card-top">
-                        <span className="herd-avatar">
-                          <Icon name="cow" />
-                        </span>
-                        <Icon name="arrow" />
-                      </div>
-                      <div className="herd-info">
-                        <h3>{animal.tagNumber}</h3>
-                        <p>{animal.breed}</p>
-                      </div>
-                      <div className="herd-meta">
-                        <span>{animal.age} years old</span>
+                <Table
+                  rows={animals.data.slice(0, 5)}
+                  columns={[
+                    ["Tag", "tagNumber"],
+                    ["Breed", "breed"],
+                    ["Age", (a) => a.age + " years"],
+                    [
+                      "Health",
+                      (a) => (
                         <Status
                           value={
-                            blockedIds.has(animal.id)
+                            blockedIds.has(a.id)
                               ? "UNDER WITHDRAWAL"
-                              : animal.healthStatus
+                              : a.healthStatus
                           }
                         />
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                      ),
+                    ],
+                  ]}
+                />
               ) : (
                 <Empty
                   icon="cow"
@@ -629,14 +600,8 @@ function VetDashboard({ user }) {
   return (
     <div className="dashboard-page">
       <DashboardHeading name={user.name} label="VET OVERVIEW" />
-      <Hero
-        title={
-          <>
-            Bookings
-            <br />
-            and treatments.
-          </>
-        }
+      <ContextSummary
+        title="Bookings and treatments"
         description="Review booking requests, update your services and record treatment or vaccination details."
         to="/bookings"
         action="View booking requests"
@@ -758,14 +723,8 @@ function AdminDashboard({ user }) {
   return (
     <div className="dashboard-page">
       <DashboardHeading name={user.name} label="ADMIN OVERVIEW" />
-      <Hero
-        title={
-          <>
-            Users, stock
-            <br />
-            and reports.
-          </>
-        }
+      <ContextSummary
+        title="Users, stock and reports"
         description="Manage accounts and inventory, check low-stock items and run the six database reports."
         to="/reports"
         action="Explore your reports"

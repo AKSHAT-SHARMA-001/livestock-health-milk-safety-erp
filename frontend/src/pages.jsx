@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import VetDirectory from "./VetDirectory";
+import { publicListings } from "./catalogue";
 import { useAuth } from "./auth";
 import { api, useFetch, today } from "./api";
 import { Form, Table, Page, Status, LoadError, Action } from "./components";
@@ -87,57 +89,46 @@ export function Animals() {
   );
 }
 export function Vets() {
-  const q = useFetch("vet", "/services"),
-    r = useFetch("vet", "/ratings");
-  return (
-    <Page title="Browse Vets">
-      <LoadError query={q} />
-      <div className="cards">
-        {q.data.map((x) => (
-          <article className="panel" key={x.id}>
-            <h2>{x.title}</h2>
-            <p>
-              {x.vet.name} · {x.vet.specialization}
-            </p>
-            <p>
-              ₹{x.price} · {x.available ? "Available" : "Unavailable"}
-            </p>
-            <p>
-              Average rating:{" "}
-              {(() => {
-                const a = r.data.filter(
-                  (y) => y.booking.listing.vet.id === x.vet.id,
-                );
-                return a.length
-                  ? (a.reduce((s, y) => s + y.score, 0) / a.length).toFixed(1)
-                  : "Not rated";
-              })()}
-            </p>
-            {x.available && <Link to="/book">Book service #{x.id}</Link>}
-          </article>
-        ))}
-      </div>
-    </Page>
-  );
+  return <VetDirectory />;
 }
 export function Book() {
   const { user } = useAuth(),
     a = useFetch("user", "/farmers/" + user.farmerId + "/animals"),
     s = useFetch("vet", "/services"),
     b = useFetch("vet", "/bookings");
+  const [params] = useSearchParams();
+  const requested = params.get("service") || "";
+  const selected = s.data.find(
+    (x) => String(x.id) === requested && x.available,
+  );
+  const choices = publicListings(s.data).filter((x) => x.available);
+  if (selected && !choices.some((x) => x.id === selected.id))
+    choices.push(selected);
   const rows = b.data.filter((x) => x.farmerId === user.farmerId);
   return (
     <Page title="Book Service">
       <LoadError query={b} />
+      <LoadError query={s} />
+      <LoadError query={a} />
+      {requested && !s.loading && !s.error && !selected && (
+        <p role="alert" className="notice">
+          The selected service is unavailable. Choose another service below.
+        </p>
+      )}
       <Form
+        key={selected?.id || "new"}
         title="New booking"
+        submit="Book appointment"
         fields={[
-          opts(
-            "listingId",
-            "Service",
-            s.data.filter((x) => x.available),
-            (x) => x.id + " · " + x.title + " · ₹" + x.price,
-          ),
+          {
+            ...opts(
+              "listingId",
+              "Service",
+              choices.filter((x) => x.available),
+              (x) => x.vet.name + " · " + x.title + " · ₹" + x.price,
+            ),
+            value: selected ? String(selected.id) : "",
+          },
           opts("animalId", "Animal", a.data, (x) => x.tagNumber),
           date("appointmentDate", "Appointment date"),
         ]}

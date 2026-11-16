@@ -78,6 +78,91 @@ function pass(message) {
         );
       }
       if (role === "Farmer") {
+        await page.goto(base + "/vets");
+        await page.waitForLoadState("networkidle");
+        assert((await page.locator(".vet-group").count()) >= 6);
+        assert.equal(
+          await page
+            .getByRole("cell", { name: "Smoke Checkup", exact: true })
+            .count(),
+          0,
+        );
+        await page
+          .getByRole("button", { name: "Show test listings", exact: true })
+          .click();
+        assert(
+          (await page
+            .getByRole("cell", { name: "Smoke Checkup", exact: true })
+            .count()) > 0,
+        );
+        await page
+          .getByRole("button", { name: "Hide test listings", exact: true })
+          .click();
+        await page
+          .getByRole("searchbox", { name: "Search", exact: true })
+          .fill("Arjun");
+        assert.equal(await page.locator(".vet-group").count(), 1);
+        await page
+          .getByRole("searchbox", { name: "Search", exact: true })
+          .fill("no-matching-vet-xyz");
+        await page
+          .getByRole("heading", { name: "No matching services" })
+          .waitFor();
+        await page.getByRole("button", { name: "Clear filters" }).click();
+        await page
+          .getByLabel("Specialty", { exact: true })
+          .selectOption("Reproductive health");
+        assert.equal(await page.locator(".vet-group").count(), 1);
+        await page
+          .getByText("Not accepting bookings", { exact: true })
+          .waitFor();
+        await page.getByLabel("Accepting bookings only").check();
+        assert.equal(
+          await page
+            .getByText("Not accepting bookings", { exact: true })
+            .count(),
+          0,
+        );
+        await page.getByLabel("Specialty", { exact: true }).selectOption("");
+        await page
+          .getByRole("searchbox", { name: "Search", exact: true })
+          .fill("nutrition");
+        await page
+          .getByRole("link", {
+            name: /Book Feed and nutrition consultation with/,
+          })
+          .click();
+        await page.waitForURL("**/book?service=*");
+        await page.waitForLoadState("networkidle");
+        const requested = new URL(page.url()).searchParams.get("service");
+        const bookForm = page
+          .locator("form")
+          .filter({
+            has: page.getByRole("heading", {
+              name: "New booking",
+              exact: true,
+            }),
+          });
+        assert.equal(
+          await bookForm.getByLabel("Service", { exact: true }).inputValue(),
+          requested,
+        );
+        assert.match(
+          await bookForm
+            .getByLabel("Service", { exact: true })
+            .locator("option:checked")
+            .innerText(),
+          /Feed and nutrition consultation/,
+        );
+        await page.goto(base + "/vets");
+        await page.waitForLoadState("networkidle");
+        await page.screenshot({
+          path: path.join(shots, "vet-directory.png"),
+          fullPage: true,
+        });
+        pass(
+          "Vet directory search, specialty/availability filters, sample data and service-specific booking",
+        );
         await page.goto(base);
         await page.waitForLoadState("networkidle");
         await page.screenshot({
@@ -95,14 +180,12 @@ function pass(message) {
       if (role === "Admin") {
         await page.goto(base + "/stock");
         const name = "Browser inventory " + Date.now();
-        const add = page
-          .locator("form")
-          .filter({
-            has: page.getByRole("heading", {
-              name: "Add inventory item",
-              exact: true,
-            }),
-          });
+        const add = page.locator("form").filter({
+          has: page.getByRole("heading", {
+            name: "Add inventory item",
+            exact: true,
+          }),
+        });
         await add.getByLabel("Name", { exact: true }).fill(name);
         await add.getByLabel("Stock", { exact: true }).fill("2");
         await add.getByLabel("Low-stock threshold", { exact: true }).fill("5");
@@ -158,14 +241,12 @@ function pass(message) {
     await page.locator(".auth-submit").click();
     await page.locator(".sidebar").waitFor();
     await page.goto(base + "/animals");
-    const form = page
-      .locator("form")
-      .filter({
-        has: page.getByRole("heading", {
-          name: "Register animal",
-          exact: true,
-        }),
-      });
+    const form = page.locator("form").filter({
+      has: page.getByRole("heading", {
+        name: "Register animal",
+        exact: true,
+      }),
+    });
     await form.getByLabel("Tag number").fill("BROWSER-" + tag);
     await form.getByLabel("Breed").fill("Jersey");
     await form.getByLabel("Age in years").fill("3");
@@ -250,7 +331,11 @@ function pass(message) {
       path: path.join(shots, "mobile-animals.png"),
       fullPage: true,
     });
-    pass("Mobile login, navigation and no horizontal page overflow");
+    await small.goto(base + "/vets");
+    await small.waitForLoadState("networkidle");
+    assert(await small.evaluate(() => document.documentElement.scrollWidth <= innerWidth+1), "Mobile vet directory overflows");
+    await small.screenshot({path:path.join(shots,"mobile-vets.png"),fullPage:true});
+    pass("Mobile login, navigation and no horizontal page overflow, including the vet directory");
     assert.deepEqual(failures, [], "Browser runtime errors");
     pass("No uncaught browser runtime errors");
     fs.writeFileSync(
