@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.*;
 /** Unit 4: one place for friendly API error responses. */
 @RestControllerAdvice
 public class ApiExceptionHandler {
+  @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  Map<String, String> conflict(Exception ex) {
+    return Map.of("message", "This value is already used, or this record is still referenced.");
+  }
   @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   Map<String, String> notFound(ResourceNotFoundException ex) {

@@ -7,21 +7,36 @@ const urls = {
 };
 // Same-origin development proxy lets a temporary HTTPS demo reach all four APIs.
 if (import.meta.env.DEV) {
-  for (const service of Object.keys(urls)) urls[service] = "/backend/" + service;
+  for (const service of Object.keys(urls))
+    urls[service] = "/backend/" + service;
 }
 export async function api(service, path, method = "GET", body) {
   let token;
   try {
     token = JSON.parse(sessionStorage.getItem("erpUser"))?.token;
   } catch {}
-  const r = await fetch(urls[service] + "/api" + path, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: "Bearer " + token } : {}),
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
+  let r;
+  try {
+    r = await fetch(urls[service] + "/api" + path, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: "Bearer " + token } : {}),
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch (error) {
+    throw Error(
+      error.name === "TimeoutError"
+        ? "The server took too long to respond. Please try again."
+        : "Could not reach the server. Check that the local ERP is running.",
+    );
+  }
+  if (r.status === 401 && !path.startsWith("/auth/")) {
+    window.dispatchEvent(new Event("erp-session-expired"));
+    throw Error("Your session has expired. Please sign in again.");
+  }
   if (!r.ok) {
     let d;
     try {
@@ -58,4 +73,11 @@ export function useFetch(service, path) {
   }, [refresh]);
   return { data, error, loading, refresh };
 }
-export const today = () => { const d = new Date(); return [d.getFullYear(), String(d.getMonth()+1).padStart(2,"0"), String(d.getDate()).padStart(2,"0")].join("-"); };
+export const today = () => {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0"),
+  ].join("-");
+};

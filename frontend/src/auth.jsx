@@ -1,10 +1,26 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 const Auth = createContext();
+function expiresAt(user) {
+  try {
+    const payload = user.token
+      .split(".")[0]
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    return Number(atob(payload).split(":")[3]) * 1000;
+  } catch {
+    return 0;
+  }
+}
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      return JSON.parse(sessionStorage.getItem("erpUser"));
+      const saved = JSON.parse(sessionStorage.getItem("erpUser"));
+      return saved &&
+        ["FARMER", "VET", "ADMIN"].includes(saved.role) &&
+        expiresAt(saved) > Date.now()
+        ? saved
+        : null;
     } catch {
       return null;
     }
@@ -17,6 +33,15 @@ export function AuthProvider({ children }) {
     setUser(null);
     sessionStorage.removeItem("erpUser");
   }
+  useEffect(() => {
+    window.addEventListener("erp-session-expired", logout);
+    return () => window.removeEventListener("erp-session-expired", logout);
+  }, []);
+  useEffect(() => {
+    if (!user) return;
+    const timer = setTimeout(logout, Math.max(0, expiresAt(user) - Date.now()));
+    return () => clearTimeout(timer);
+  }, [user]);
   return (
     <Auth.Provider value={{ user, login, logout }}>{children}</Auth.Provider>
   );

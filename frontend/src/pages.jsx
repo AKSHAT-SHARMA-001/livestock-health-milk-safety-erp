@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "./auth";
 import { api, useFetch, today } from "./api";
 import { Form, Table, Page, Status, LoadError, Action } from "./components";
@@ -33,96 +33,6 @@ const bookingCols = [
   ["Fee", "fee"],
   ["Status", (r) => <Status value={r.status} />],
 ];
-export function Login() {
-  const { user, login } = useAuth();
-  const [register, setRegister] = useState(false);
-  if (user) return <Navigate to="/" />;
-  return (
-    <Page title="Welcome to Livestock ERP">
-      <p>
-        Manage animal care and keep milk sales safe during antibiotic
-        withdrawal.
-      </p>
-      <p className="notice">
-        Demo login: farmer@demo.local, vet@demo.local or admin@demo.local.
-        Password: Demo123!
-      </p>
-      <Form
-        key={String(register)}
-        title={register ? "Register Farmer" : "Sign in"}
-        fields={
-          register
-            ? [
-                text("name", "Full name"),
-                { name: "email", label: "Email", type: "email" },
-                { name: "password", label: "Password", type: "password" },
-                text("phone", "Phone"),
-                text("village", "Village"),
-                text("address", "Address"),
-              ]
-            : [
-                {
-                  name: "email",
-                  label: "Email",
-                  type: "email",
-                  value: "farmer@demo.local",
-                },
-                {
-                  name: "password",
-                  label: "Password",
-                  type: "password",
-                  value: "Demo123!",
-                },
-              ]
-        }
-        onSubmit={async (body) =>
-          login(
-            await api(
-              "user",
-              register ? "/auth/register/farmer" : "/auth/login",
-              "POST",
-              body,
-            ),
-          )
-        }
-        submit={register ? "Register" : "Sign in"}
-      />
-      <button className="secondary" onClick={() => setRegister(!register)}>
-        {register ? "Already registered? Sign in" : "New farmer? Register"}
-      </button>
-    </Page>
-  );
-}
-export function Dashboard() {
-  const { user } = useAuth();
-  return (
-    <Page
-      title={user.role[0] + user.role.slice(1).toLowerCase() + " Dashboard"}
-    >
-      <div className="cards">
-        <article className="panel">
-          <h2>Hello, {user.name}</h2>
-          <p>Use the navigation to manage your daily work.</p>
-        </article>
-        <article className="panel">
-          <h2>Milk safety rule</h2>
-          <p>
-            Antibiotic withdrawal blocks sales through the end date. Sales
-            resume the next day; milk collected during withdrawal stays
-            excluded.
-          </p>
-        </article>
-        <article className="panel">
-          <h2>Care workflow</h2>
-          <p>
-            Register animal → Book vet → Accept visit → Record treatment → Check
-            withdrawal → Sell safe milk.
-          </p>
-        </article>
-      </div>
-    </Page>
-  );
-}
 export function Animals() {
   const { user } = useAuth();
   const q = useFetch("user", "/farmers/" + user.farmerId + "/animals");

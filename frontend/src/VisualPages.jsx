@@ -74,36 +74,36 @@ export function Login() {
         </Link>
         <div className="auth-visual-copy">
           <span className="auth-eyebrow">
-            <span className="live-dot" /> CARE THAT COMES FULL CIRCLE
+            <span className="live-dot" /> LIVESTOCK HEALTH & MILK SAFETY
           </span>
           <h1>
-            Healthy herds.
+            Animal health.
             <br />
-            Safer milk.
+            Milk safety.
             <br />
-            <em>Better days.</em>
+            <em>Farm records.</em>
           </h1>
           <p>
-            Bring your animals, veterinary care and everyday farm work together
-            in one thoughtful workspace.
+            Register animals, book veterinary visits and keep track of which
+            milk is safe to sell.
           </p>
         </div>
         <div className="auth-visual-bottom">
           <span>
-            <Icon name="shield" /> Animal care. Milk safety. Peace of mind.
+            <Icon name="shield" /> Animals, treatments and milk records
           </span>
-          <span>Built for your everyday.</span>
+          <span>Full Stack Web Development</span>
         </div>
       </div>
       <div className="auth-panel">
         <div className="auth-content">
           <div className="auth-header">
-            <span className="eyebrow">YOUR FARM. CONNECTED.</span>
-            <h2>{register ? "A fresh start." : "Welcome back."}</h2>
+            <span className="eyebrow">LIVESTOCK ERP</span>
+            <h2>{register ? "Register as a farmer" : "Sign in"}</h2>
             <p>
               {register
-                ? "Create your farmer account and give your herd a little more care."
-                : "Good to see you. Let’s take care of what matters."}
+                ? "Enter your details to register your farm."
+                : "Choose a demo account, or enter your own email and password."}
             </p>
           </div>
           {!register && (
@@ -218,7 +218,8 @@ export function Login() {
             )}
             {!register && (
               <p className="auth-security">
-                <Icon name="shield" /> Your workspace, securely connected.
+                <Icon name="shield" /> Your session is limited to this browser
+                tab.
               </p>
             )}
             {error && (
@@ -228,15 +229,15 @@ export function Login() {
             )}
             <button className="auth-submit" disabled={busy}>
               {busy
-                ? "Just a moment…"
+                ? "Signing in…"
                 : register
                   ? "Create farmer account"
-                  : "Sign in to your workspace"}
+                  : "Sign in"}
               <Icon name="arrow" />
             </button>
           </form>
           <p className="auth-switch">
-            {register ? "Already part of the herd?" : "New to Livestock?"}{" "}
+            {register ? "Already have an account?" : "Need an account?"}{" "}
             <button
               type="button"
               onClick={() => {
@@ -253,11 +254,11 @@ export function Login() {
               <Icon name="leaf" />
             </span>
             <div>
-              <strong>A little preview, before you begin</strong>
+              <strong>Demo accounts</strong>
               <p>
                 {register
                   ? "Farmer signup connects your animals, visits and milk records."
-                  : "Explore any role using the tabs above. Demo password: Demo123!"}
+                  : "Select Farmer, Vet or Admin above. Password: Demo123!"}
               </p>
             </div>
           </div>
@@ -265,7 +266,7 @@ export function Login() {
         <div className="auth-bottom">
           <span>21CSE354T · Academic project</span>
           <span>
-            Made for better farm days <Icon name="sun" />
+            Runs on your local server <Icon name="sun" />
           </span>
         </div>
       </div>
@@ -277,11 +278,11 @@ function DashboardHeading({ name, label }) {
   return (
     <div className="dashboard-heading">
       <div>
-        <span className="eyebrow">{label || "YOUR FARM AT A GLANCE"}</span>
+        <span className="eyebrow">{label || "FARM OVERVIEW"}</span>
         <h1>
-          A good day starts here<span className="heading-dot">.</span>
+          Dashboard<span className="heading-dot">.</span>
         </h1>
-        <p>Welcome back, {name}. Here’s what’s happening today.</p>
+        <p>Welcome back, {name}. Your current records are shown below.</p>
       </div>
       <div className="dashboard-date">
         <Icon name="calendar" />
@@ -304,7 +305,7 @@ function Hero({ title, description, to, action }) {
       <div className="hero-shade" />
       <div className="hero-copy">
         <span className="hero-eyebrow">
-          <Icon name="leaf" /> A LITTLE CARE GOES A LONG WAY
+          <Icon name="leaf" /> LIVESTOCK MANAGEMENT
         </span>
         <h2>{title}</h2>
         <p>{description}</p>
@@ -314,7 +315,7 @@ function Hero({ title, description, to, action }) {
         </Link>
       </div>
       <span className="hero-tag">
-        <Icon name="shield" /> Healthier herds, by design.
+        <Icon name="shield" /> Treatment-linked milk sale checks
       </span>
     </section>
   );
@@ -337,7 +338,7 @@ function QuickLinks({ links }) {
   return (
     <section className="dashboard-quick">
       <div className="section-heading">
-        <h2>A little less clicking</h2>
+        <h2>Quick actions</h2>
         <span className="eyebrow">QUICK ACTIONS</span>
       </div>
       <div className="quick-links">
@@ -363,10 +364,11 @@ function SafetyCard({ blocked = 0, error = false }) {
       <span className="safety-icon">
         <Icon name="shield" />
       </span>
-      <span className="eyebrow">MILK SAFETY FIRST</span>
+      <span className="eyebrow">WITHDRAWAL CHECK</span>
       <h3>
-        A small pause.
-        <br />A safer tomorrow.
+        Milk under
+        <br />
+        withdrawal
       </h3>
       <p>
         {error
@@ -433,21 +435,21 @@ function FarmerDashboard({ user }) {
       <Hero
         title={
           <>
-            Happy herd.
+            Animal records
             <br />
-            Healthy possibilities.
+            and daily milk.
           </>
         }
-        description="Stay a step ahead of animal care, vet visits and safer milk. Your whole farm, in one place."
+        description="Manage your animals, arrange a vet visit and record milk yield. Milk sales are checked against recorded treatments."
         to="/animals"
-        action="Meet your herd"
+        action="View my animals"
       />
       <div className="stats-grid">
         <Stat
           icon="cow"
-          label="Animals in your care"
+          label="Registered animals"
           value={value(animals, animals.data.length)}
-          detail="A little care for every one"
+          detail="Animals registered to your account"
         />
         <Stat
           icon="milk"
@@ -459,7 +461,7 @@ function FarmerDashboard({ user }) {
               <small> L</small>
             </>,
           )}
-          detail="Your daily yield, kept in sight"
+          detail="Total yield entered for today"
           tone="cream"
         />
         <Stat
@@ -482,8 +484,8 @@ function FarmerDashboard({ user }) {
           <section className="herd-section">
             <div className="section-heading">
               <div>
-                <span className="eyebrow">THE HEART OF YOUR FARM</span>
-                <h2>Your herd, at a glance</h2>
+                <span className="eyebrow">ANIMAL REGISTRY</span>
+                <h2>My animals</h2>
               </div>
               <Link to="/animals">
                 View all animals
@@ -527,7 +529,7 @@ function FarmerDashboard({ user }) {
               ) : (
                 <Empty
                   icon="cow"
-                  title="Every great farm starts with a first animal"
+                  title="No animals registered"
                   to="/animals"
                   action="Register an animal"
                 >
@@ -538,7 +540,7 @@ function FarmerDashboard({ user }) {
           <section className="activity-panel">
             <div className="section-heading">
               <div>
-                <span className="eyebrow">CARE ON THE CALENDAR</span>
+                <span className="eyebrow">BOOKINGS</span>
                 <h2>Upcoming appointments</h2>
               </div>
               <Link to="/book">
@@ -573,7 +575,7 @@ function FarmerDashboard({ user }) {
                   ]}
                 />
               ) : (
-                <Empty icon="calendar" title="A little breathing room">
+                <Empty icon="calendar" title="No upcoming bookings">
                   No upcoming visits. You can book a vet whenever your herd
                   needs care.
                 </Empty>
@@ -586,19 +588,19 @@ function FarmerDashboard({ user }) {
               [
                 "/animals",
                 "Register an animal",
-                "Make room for a new arrival",
+                "Add an animal to your registry",
                 "plus",
               ],
               [
                 "/book",
                 "Book a vet visit",
-                "Good care is a booking away",
+                "Choose a service and appointment date",
                 "stethoscope",
               ],
               [
                 "/milk",
                 "Record today's milk",
-                "Keep the everyday in order",
+                "Add daily yield or make a sale",
                 "milk",
               ],
             ]}
@@ -626,16 +628,16 @@ function VetDashboard({ user }) {
   );
   return (
     <div className="dashboard-page">
-      <DashboardHeading name={user.name} label="GOOD CARE, WELL ORGANIZED" />
+      <DashboardHeading name={user.name} label="VET OVERVIEW" />
       <Hero
         title={
           <>
-            Better care.
+            Bookings
             <br />
-            One visit at a time.
+            and treatments.
           </>
         }
-        description="Make space for what you do best. Your bookings, services and treatment records are all right here."
+        description="Review booking requests, update your services and record treatment or vaccination details."
         to="/bookings"
         action="View booking requests"
       />
@@ -650,7 +652,7 @@ function VetDashboard({ user }) {
           icon="stethoscope"
           label="Accepted visits"
           value={value(bookings, accepted.length)}
-          detail="Ready for your care"
+          detail="Bookings you have accepted"
           tone="cream"
         />
         <Stat
@@ -672,7 +674,7 @@ function VetDashboard({ user }) {
         <section className="activity-panel">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">YOUR NEXT CHAPTER OF CARE</span>
+              <span className="eyebrow">APPOINTMENTS</span>
               <h2>Recent bookings</h2>
             </div>
             <Link to="/bookings">
@@ -694,7 +696,7 @@ function VetDashboard({ user }) {
                 ]}
               />
             ) : (
-              <Empty icon="calendar" title="Your next visit starts here">
+              <Empty icon="calendar" title="No bookings yet">
                 Create a service so farmers can book an appointment with you.
               </Empty>
             ))}
@@ -705,19 +707,19 @@ function VetDashboard({ user }) {
               [
                 "/services",
                 "Manage your services",
-                "Keep your care offerings up to date",
+                "Edit availability and create listings",
                 "stethoscope",
               ],
               [
                 "/treatment",
                 "Record treatment",
-                "Keep every visit connected",
+                "Enter medicine, dose and withdrawal days",
                 "heart",
               ],
               [
                 "/history",
                 "Review care history",
-                "The full picture, in one place",
+                "Review saved treatments and vaccinations",
                 "clock",
               ],
             ]}
@@ -728,9 +730,9 @@ function VetDashboard({ user }) {
             </span>
             <span className="eyebrow">BUILT-IN MILK SAFETY</span>
             <h3>
-              Your care.
+              Treatment records
               <br />
-              Their peace of mind.
+              and milk safety.
             </h3>
             <p>
               Antibiotic treatments automatically create withdrawal blocks
@@ -755,15 +757,16 @@ function AdminDashboard({ user }) {
   const lowStock = stock.data.filter((x) => x.stock < x.threshold);
   return (
     <div className="dashboard-page">
-      <DashboardHeading name={user.name} label="THE BIGGER PICTURE" />
+      <DashboardHeading name={user.name} label="ADMIN OVERVIEW" />
       <Hero
         title={
           <>
-            A connected farm.
-            <br />A clearer perspective.
+            Users, stock
+            <br />
+            and reports.
           </>
         }
-        description="From medicine on the shelf to care in the field, keep your entire operation moving with confidence."
+        description="Manage accounts and inventory, check low-stock items and run the six database reports."
         to="/reports"
         action="Explore your reports"
       />
@@ -807,7 +810,7 @@ function AdminDashboard({ user }) {
         <section className="activity-panel">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">KEEP THE ESSENTIALS CLOSE</span>
+              <span className="eyebrow">PHARMACY</span>
               <h2>Inventory that needs attention</h2>
             </div>
             <Link to="/stock">
@@ -841,7 +844,7 @@ function AdminDashboard({ user }) {
               [
                 "/users",
                 "Manage people",
-                "A connected community of care",
+                "View users and create vet accounts",
                 "users",
               ],
               [
@@ -850,23 +853,18 @@ function AdminDashboard({ user }) {
                 "Keep medicines and vaccines ready",
                 "box",
               ],
-              [
-                "/reports",
-                "Explore reports",
-                "Turn your farm records into clarity",
-                "chart",
-              ],
+              ["/reports", "Explore reports", "Run the SQL reports", "chart"],
             ]}
           />
           <section className="safety-card">
             <span className="safety-icon">
               <Icon name="chart" />
             </span>
-            <span className="eyebrow">RECORDS WITH PERSPECTIVE</span>
+            <span className="eyebrow">DATABASE REPORTS</span>
             <h3>
-              A clearer view.
+              Six reports.
               <br />
-              Better decisions.
+              Current data.
             </h3>
             <p>
               Explore six live reports connecting animal care, withdrawal

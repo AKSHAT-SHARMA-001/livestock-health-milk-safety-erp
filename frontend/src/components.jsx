@@ -133,7 +133,12 @@ export function Status({ value }) {
   return (
     <span
       className={
-        "badge " + (value === "COMPLETED" || value === "HEALTHY" ? "good" : "")
+        "badge " +
+        (["COMPLETED", "HEALTHY", "OK"].includes(value)
+          ? "good"
+          : /BLOCK|WITHDRAWAL|REJECTED|LOW STOCK/.test(value)
+            ? "negative"
+            : "")
       }
     >
       {value}
@@ -164,7 +169,11 @@ export function Action({
       <button
         disabled={busy}
         onClick={async () => {
-          if (method === "DELETE" && !window.confirm("Delete this record? This cannot be undone.")) return;
+          if (
+            method === "DELETE" &&
+            !window.confirm("Delete this record? This cannot be undone.")
+          )
+            return;
           setBusy(true);
           setErr("");
           try {

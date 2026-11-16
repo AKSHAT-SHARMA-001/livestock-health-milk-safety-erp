@@ -36,4 +36,4 @@ for name in ['USER','VET','PHARMACY','MILK']:
         except OSError: time.sleep(1)
     else: raise SystemExit(name+' did not start; inspect logs/h2-*')
 PY
-python3 scripts/smoke-test.py
+python3 scripts/negative-check.py
